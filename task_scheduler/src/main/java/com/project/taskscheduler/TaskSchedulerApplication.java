@@ -1,4 +1,4 @@
-package com.project.task_scheduler;
+package com.project.taskscheduler;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,5 +10,4 @@ public class TaskSchedulerApplication {
 		SpringApplication.run(TaskSchedulerApplication.class, args);
 		System.out.println("🚀 Task Scheduler Application Started...");
 	}
-
 }

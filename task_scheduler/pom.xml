@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.project</groupId>
-	<artifactId>task_scheduler</artifactId>
+	<artifactId>taskscheduler</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>task_scheduler</name>
+	<name>taskscheduler</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

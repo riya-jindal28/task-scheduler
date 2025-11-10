@@ -1,4 +1,4 @@
-package com.project.task_scheduler;
+package com.project.taskscheduler;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

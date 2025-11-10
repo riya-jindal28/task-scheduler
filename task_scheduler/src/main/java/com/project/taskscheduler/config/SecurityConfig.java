@@ -1,4 +1,4 @@
-package com.project.task_scheduler.config;
+package com.project.taskscheduler.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

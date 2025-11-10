@@ -1,10 +1,10 @@
-package com.project.task_scheduler.controller;
+package com.project.taskscheduler.controller;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.config.Task;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.task_scheduler.model.Tasks;
-import com.project.task_scheduler.service.TaskService;
+import com.project.taskscheduler.model.Task;
+import com.project.taskscheduler.service.TaskService;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -26,33 +26,33 @@ public class TaskController {
     private TaskService taskService;
 
     @PostMapping("/create")
-    public Tasks createOrUpdateTasks(@RequestBody Tasks task){
+    public Task createOrUpdateTasks(@RequestBody Task task) throws Exception{
         return taskService.saveTask(task);
     }
 
     @GetMapping("/all")
-    public List<Tasks> getAllTasks(){
+    public List<Task> getAllTasks(){
         return taskService.getAll();
     }
 
     @GetMapping("/{taskId}")
-    public Optional<Tasks> getTaskById(@PathVariable Long taskId){
+    public Optional<Task> getTaskById(@PathVariable Long taskId){
         return taskService.getTaskById(taskId);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteTask(@PathVariable Long taskId) {
+    public String deleteTask(@PathVariable Long taskId) throws SchedulerException {
         taskService.deleteTask(taskId);
         return "Task deleted successfully (ID: " + taskId + ")";
     }
 
     @GetMapping("/active")
-    public List<Tasks> getActiveTasks() {
+    public List<Task> getActiveTasks() {
         return taskService.getActiveTasks();
     }
 
     @PutMapping("/{id}/status")
-    public Tasks toggleTaskStatus(@PathVariable Long id, @RequestParam boolean active) {
+    public Task toggleTaskStatus(@PathVariable Long id, @RequestParam boolean active) throws Exception {
         return taskService.toggleTaskStatus(id, active);
     }
 
