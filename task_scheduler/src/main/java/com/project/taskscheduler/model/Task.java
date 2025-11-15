@@ -35,5 +35,6 @@ public class Task {
     private String jobClass; 
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean active = true; 
 }

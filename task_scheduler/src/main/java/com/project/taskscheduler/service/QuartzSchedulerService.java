@@ -1,7 +1,6 @@
 package com.project.taskscheduler.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
