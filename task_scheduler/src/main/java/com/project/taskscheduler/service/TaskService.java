@@ -50,15 +50,23 @@ public class TaskService {
 }
 
     public Task toggleTaskStatus(Long taskId, boolean active) throws Exception {
-        Optional<Task> taskOpt = taskRepository.findById(taskId);
-        if (taskOpt.isPresent()) {
-            Task task = taskOpt.get();
-            task.setActive(active);
-            quartzSchedulerService.scheduleTask(task);
-            return taskRepository.save(task);
+    Optional<Task> taskOpt = taskRepository.findById(taskId);
+    if (taskOpt.isPresent()) {
+        Task task = taskOpt.get();
+
+        task.setActive(active);
+        Task updated = taskRepository.save(task);
+
+        if(active) {
+            quartzSchedulerService.scheduleTask(updated);
         }
-        return null;
+        else{
+            quartzSchedulerService.unscheduleTask(updated);
+        }
+        return updated;
     }
+    return null;
+}
 
 
 }
