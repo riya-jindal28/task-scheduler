@@ -12,17 +12,17 @@ import com.project.taskscheduler.repository.TaskRepository;
 
 @Service
 public class TaskService {
-    
+
     @Autowired
     private TaskRepository taskRepository;
 
     @Autowired
     private QuartzSchedulerService quartzSchedulerService;
 
-
     public Task saveTask(Task task) throws Exception {
+        Task saved = taskRepository.save(task);
         quartzSchedulerService.scheduleTask(task);
-        return taskRepository.save(task);
+        return saved;
 
     }
 
@@ -30,7 +30,7 @@ public class TaskService {
         return taskRepository.findById(taskId);
     }
 
-    public List<Task> getAll(){
+    public List<Task> getAll() {
         return taskRepository.findAll();
     }
 
@@ -38,35 +38,33 @@ public class TaskService {
         return taskRepository.findByActiveTrue();
     }
 
-    public void deleteTask(Long taskId) throws SchedulerException{
+    public void deleteTask(Long taskId) throws SchedulerException {
         Optional<Task> optionalTask = taskRepository.findById(taskId);
         if (optionalTask.isPresent()) {
             Task task = optionalTask.get();
 
             // Unschedule it first before deleting
             quartzSchedulerService.unscheduleTask(task);
-        taskRepository.deleteById(taskId);
+            taskRepository.deleteById(taskId);
+        }
     }
-}
 
     public Task toggleTaskStatus(Long taskId, boolean active) throws Exception {
-    Optional<Task> taskOpt = taskRepository.findById(taskId);
-    if (taskOpt.isPresent()) {
-        Task task = taskOpt.get();
+        Optional<Task> taskOpt = taskRepository.findById(taskId);
+        if (taskOpt.isPresent()) {
+            Task task = taskOpt.get();
 
-        task.setActive(active);
-        Task updated = taskRepository.save(task);
+            task.setActive(active);
+            Task updated = taskRepository.save(task);
 
-        if(active) {
-            quartzSchedulerService.scheduleTask(updated);
+            if (active) {
+                quartzSchedulerService.scheduleTask(updated);
+            } else {
+                quartzSchedulerService.unscheduleTask(updated);
+            }
+            return updated;
         }
-        else{
-            quartzSchedulerService.unscheduleTask(updated);
-        }
-        return updated;
+        return null;
     }
-    return null;
-}
-
 
 }

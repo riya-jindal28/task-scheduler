@@ -40,8 +40,14 @@ public class TaskController {
         return taskService.getTaskById(taskId);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{taskId}")
     public String deleteTask(@PathVariable Long taskId) throws SchedulerException {
+        Optional<Task> taskOpt =taskService.getTaskById(taskId);
+
+        if(taskOpt.isEmpty()){
+            return "Not Found with ID:" + taskId;
+        }
+
         taskService.deleteTask(taskId);
         return "Task deleted successfully (ID: " + taskId + ")";
     }

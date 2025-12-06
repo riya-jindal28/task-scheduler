@@ -21,9 +21,9 @@ public class QuartzStartUp implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("🚀 Initializing Quartz Scheduler...");
+        log.info("Initializing Quartz Scheduler...");
         schedulerService.scheduleAllActiveFromDb();
-        log.info("✅ All active tasks have been scheduled successfully!");
+        log.info("All active tasks have been scheduled successfully!");
     }
 }
 
