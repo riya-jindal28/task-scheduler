@@ -2,8 +2,12 @@ package com.project.taskscheduler.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.taskscheduler.model.ExecutionStatus;
 import com.project.taskscheduler.model.TaskExecutionHistory;
 import com.project.taskscheduler.service.TaskExecutionHistoryService;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,5 +37,18 @@ public class TaskExecutionHistoryController {
         return ResponseEntity.ok(history);
     }
 
+    @GetMapping("/task/{status}")
+    public ResponseEntity<List<TaskExecutionHistory>> getTaskExecutionHistoryByStatus(@PathVariable ExecutionStatus status) {
+        List<TaskExecutionHistory> history = taskExecutionHistoryService.getTaskExecutionHistoryByStatus(status);
+        return ResponseEntity.ok(history);
+    }
+
+    @GetMapping("/task/time")
+    public ResponseEntity<List<TaskExecutionHistory>> getTaskExecutionHistoryByTime(@RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime) {
+        List<TaskExecutionHistory> history = taskExecutionHistoryService.getTaskExecutionHistoryByTime(startTime, endTime);
+        return ResponseEntity.ok(history);
+    }
+
+    
     
 }

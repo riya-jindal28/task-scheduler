@@ -2,6 +2,8 @@ package com.project.taskscheduler.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,4 +39,17 @@ public class Task {
     @Column(nullable = false)
     @Builder.Default
     private Boolean active = true; 
+
+    @Enumerated(EnumType.STRING)    
+    @Column(nullable = false)
+    private RetryStrategy retryStrategy;
+
+    @Column(nullable = false)
+    private Integer maxretryCount;
+
+    @Column(nullable = false)
+    private Integer retryDelay;
+
+    @Column(nullable = false)
+    private Integer retryBackoff;
 }

@@ -71,23 +71,16 @@ public class TaskExecutionHistoryService {
         }
     }
 
-    public ExecutionStatistics getExecutionStatistics(Long taskId) {
-        long totalExecutions = taskExecutionHistoryRepository.countByTaskId(taskId);
-        long successCount = taskExecutionHistoryRepository.countByTaskIdAndStatus(taskId, ExecutionStatus.SUCCESS);
-        long failureCount = taskExecutionHistoryRepository.countByTaskIdAndStatus(taskId, ExecutionStatus.FAILURE);
-
-        List<TaskExecutionHistory> executions = taskExecutionHistoryRepository.findByTaskId(taskId);
-        double avgDuration = executions.stream()
-                .filter(e -> e.getDuration() != null)
-                .mapToLong(TaskExecutionHistory::getDuration)
-                .average()
-                .orElse(0.0);
-
-        return new ExecutionStatistics(totalExecutions, successCount, failureCount, avgDuration);
-    }
-
     public Page<TaskExecutionHistory> getTaskExecutionHistory(Long taskId, Pageable pageable) {
         return taskExecutionHistoryRepository.findByTaskIdOrderByStartTimeDesc(taskId, pageable);
+    }
+
+    public List<TaskExecutionHistory> getTaskExecutionHistoryByStatus(ExecutionStatus status) {
+        return taskExecutionHistoryRepository.findByStatus(status);
+    }
+
+    public List<TaskExecutionHistory> getTaskExecutionHistoryByTime(LocalDateTime starTime, LocalDateTime endTime){
+        return taskExecutionHistoryRepository.findByStartTimeBetween(starTime, endTime);
     }
 
     private String getHostname() {
@@ -107,6 +100,21 @@ public class TaskExecutionHistoryService {
         PrintWriter printWriter = new PrintWriter(stringWriter);
         exception.printStackTrace(printWriter);
         return stringWriter.toString();
+    }
+
+    public ExecutionStatistics getExecutionStatistics(Long taskId) {
+        long totalExecutions = taskExecutionHistoryRepository.countByTaskId(taskId);
+        long successCount = taskExecutionHistoryRepository.countByTaskIdAndStatus(taskId, ExecutionStatus.SUCCESS);
+        long failureCount = taskExecutionHistoryRepository.countByTaskIdAndStatus(taskId, ExecutionStatus.FAILURE);
+
+        List<TaskExecutionHistory> executions = taskExecutionHistoryRepository.findByTaskId(taskId);
+        double avgDuration = executions.stream()
+                .filter(e -> e.getDuration() != null)
+                .mapToLong(TaskExecutionHistory::getDuration)
+                .average()
+                .orElse(0.0);
+
+        return new ExecutionStatistics(totalExecutions, successCount, failureCount, avgDuration);
     }
 
     @Getter
