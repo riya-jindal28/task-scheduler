@@ -1,7 +1,8 @@
 package com.project.taskscheduler.model;
 
-public enum ExecutionStaus {
+public enum ExecutionStatus {
     RUNNING,
     COMPLETED,
-    FAILURE
+    FAILURE,
+    SUCCESS
 }
