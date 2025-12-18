@@ -22,4 +22,8 @@ public interface TaskExecutionHistoryRepository extends JpaRepository<TaskExecut
 
     long countByTaskIdAndStatus(Long taskId, ExecutionStatus status);
 
+    List<TaskExecutionHistory> findByParentExecutionId(Long parentExecutionId);
+
+    List<TaskExecutionHistory> findByTaskIdAndIsRetry(Long taskId, Boolean isRetry);
+
 }

@@ -22,33 +22,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping("/api/execution-history")
 public class TaskExecutionHistoryController {
-    
+
     @Autowired
     private TaskExecutionHistoryService taskExecutionHistoryService;
 
     @GetMapping("/task/{taskId}")
     public ResponseEntity<Page<TaskExecutionHistory>> getTaskExecutionHistory(@PathVariable Long taskId,
-        @RequestParam(defaultValue = "0") int page ,
-        @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<TaskExecutionHistory> history = taskExecutionHistoryService.getTaskExecutionHistory(taskId, pageable);
         return ResponseEntity.ok(history);
     }
 
-    @GetMapping("/task/{status}")
-    public ResponseEntity<List<TaskExecutionHistory>> getTaskExecutionHistoryByStatus(@PathVariable ExecutionStatus status) {
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<TaskExecutionHistory>> getTaskExecutionHistoryByStatus(
+            @PathVariable ExecutionStatus status) {
         List<TaskExecutionHistory> history = taskExecutionHistoryService.getTaskExecutionHistoryByStatus(status);
         return ResponseEntity.ok(history);
     }
 
     @GetMapping("/task/time")
-    public ResponseEntity<List<TaskExecutionHistory>> getTaskExecutionHistoryByTime(@RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime) {
-        List<TaskExecutionHistory> history = taskExecutionHistoryService.getTaskExecutionHistoryByTime(startTime, endTime);
+    public ResponseEntity<List<TaskExecutionHistory>> getTaskExecutionHistoryByTime(
+            @RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime) {
+        List<TaskExecutionHistory> history = taskExecutionHistoryService.getTaskExecutionHistoryByTime(startTime,
+                endTime);
         return ResponseEntity.ok(history);
     }
 
-    
-    
 }

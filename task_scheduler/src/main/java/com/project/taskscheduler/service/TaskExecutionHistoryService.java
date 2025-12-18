@@ -41,6 +41,24 @@ public class TaskExecutionHistoryService {
         return saved.getExecutionId();
     }
 
+    public Long recordRetryExecutionStart(Long taskId, String taskName, int retryAttempt, Long parentExecutionId) {
+        String hostname = getHostname();
+
+        TaskExecutionHistory execution = TaskExecutionHistory.builder()
+                .taskId(taskId)
+                .taskName(taskName)
+                .status(ExecutionStatus.RUNNING)
+                .startTime(LocalDateTime.now())
+                .executedBy(hostname)
+                .retryAttempts(retryAttempt)
+                .parentExecutionId(parentExecutionId)
+                .isRetry(true)
+                .build();
+
+        TaskExecutionHistory saved = taskExecutionHistoryRepository.save(execution);
+        return saved.getExecutionId();
+    }
+
     public void recordExecutionSuccess(Long executionId) {
         Optional<TaskExecutionHistory> optionalExecution = taskExecutionHistoryRepository.findById(executionId);
         if (optionalExecution.isPresent()) {
@@ -55,7 +73,7 @@ public class TaskExecutionHistoryService {
         }
     }
 
-    public void recordExecutionFailure(Long executionId, Exception error) {
+    public TaskExecutionHistory recordExecutionFailure(Long executionId, Exception error) {
         Optional<TaskExecutionHistory> optionalExecution = taskExecutionHistoryRepository.findById(executionId);
         if (optionalExecution.isPresent()) {
             TaskExecutionHistory execution = optionalExecution.get();
@@ -67,8 +85,9 @@ public class TaskExecutionHistoryService {
             execution.setError(error.getMessage());
             execution.setErrorStackTrace(getStackTraceAsString(error));
 
-            taskExecutionHistoryRepository.save(execution);
+            return taskExecutionHistoryRepository.save(execution);
         }
+        return null;
     }
 
     public Page<TaskExecutionHistory> getTaskExecutionHistory(Long taskId, Pageable pageable) {
@@ -79,8 +98,20 @@ public class TaskExecutionHistoryService {
         return taskExecutionHistoryRepository.findByStatus(status);
     }
 
-    public List<TaskExecutionHistory> getTaskExecutionHistoryByTime(LocalDateTime starTime, LocalDateTime endTime){
+    public List<TaskExecutionHistory> getTaskExecutionHistoryByTime(LocalDateTime starTime, LocalDateTime endTime) {
         return taskExecutionHistoryRepository.findByStartTimeBetween(starTime, endTime);
+    }
+
+    public TaskExecutionHistory getExecutionById(Long executionId) {
+        return taskExecutionHistoryRepository.findById(executionId).orElse(null);
+    }
+
+    public List<TaskExecutionHistory> getRetryHistory(Long parentExecutionId) {
+        return taskExecutionHistoryRepository.findByParentExecutionId(parentExecutionId);
+    }
+
+    public List<TaskExecutionHistory> getRetryHistoryForTask(Long taskId) {
+        return taskExecutionHistoryRepository.findByTaskIdAndIsRetry(taskId, true);
     }
 
     private String getHostname() {

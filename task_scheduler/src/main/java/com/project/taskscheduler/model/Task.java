@@ -42,14 +42,14 @@ public class Task {
 
     @Enumerated(EnumType.STRING)    
     @Column(nullable = false)
-    private RetryStrategy retryStrategy;
+    private RetryStrategy retryStrategy = RetryStrategy.NONE;
 
     @Column(nullable = false)
-    private Integer maxretryCount;
+    private Integer maxRetryCount = 3;      //max number of retry attempts
 
     @Column(nullable = false)
-    private Integer retryDelay;
+    private Integer retryDelay = 5;         //delay between retry attempts
 
     @Column(nullable = false)
-    private Integer retryBackoff;
+    private Integer retry_exponentialDelay = 5; //exponential delay between retry attempts
 }

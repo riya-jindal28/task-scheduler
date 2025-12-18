@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Getter;
@@ -31,7 +32,7 @@ public class TaskExecutionHistory {
     private Long taskId;
     private String taskName;
 
-    @Enumerated(EnumType.STRING) // Without this, it stores as integer
+    @Enumerated(EnumType.STRING) //Without this, it stores as integer
     private ExecutionStatus status;
 
     private LocalDateTime startTime;
@@ -45,4 +46,11 @@ public class TaskExecutionHistory {
     private String errorStackTrace;
 
     private String executedBy;
+
+    private Integer retryAttempts;      
+
+    private Long parentExecutionId;  // Parent execution ID for retries
+
+    @Builder.Default
+    private Boolean isRetry = false;  
 }
