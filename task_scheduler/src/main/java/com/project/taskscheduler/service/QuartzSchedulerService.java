@@ -14,7 +14,7 @@ import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.Trigger;
 import org.springframework.stereotype.Service;
-
+import com.project.taskscheduler.listener.GlobalJobListener;
 import com.project.taskscheduler.model.Task;
 import com.project.taskscheduler.repository.TaskRepository;
 
@@ -22,10 +22,14 @@ import com.project.taskscheduler.repository.TaskRepository;
 public class QuartzSchedulerService {
     private final Scheduler scheduler;
     private final TaskRepository tasksRepo;
+    private final GlobalJobListener globalJobListener;
 
-    public QuartzSchedulerService(Scheduler scheduler, TaskRepository taskRepository) {
+    public QuartzSchedulerService(Scheduler scheduler, TaskRepository taskRepository,
+            GlobalJobListener globalJobListener) throws SchedulerException {
         this.scheduler = scheduler;
         this.tasksRepo = taskRepository;
+        this.globalJobListener = globalJobListener;
+        this.scheduler.getListenerManager().addJobListener(globalJobListener);
     }
 
     public void scheduleTask(Task task) throws Exception {
@@ -33,8 +37,8 @@ public class QuartzSchedulerService {
             unscheduleTask(task);
             return;
         }
-        
-    // Dynamically load job class from the 'jobClass' field in DB
+
+        // Dynamically load job class from the 'jobClass' field in DB
         Class<? extends Job> jobClass = loadJobClass(task.getJobClass());
 
         JobKey jobKey = JobKey.jobKey("task-" + task.getTaskId(), "tasks");
@@ -59,14 +63,16 @@ public class QuartzSchedulerService {
 
         // If the job already exists, update it
         if (scheduler.checkExists(jobKey)) {
-            scheduler.addJob(jobDetail, true);              // update job detail
-            scheduler.rescheduleJob(triggerKey, trigger);   // update trigger
+            scheduler.addJob(jobDetail, true); // update job detail
+            scheduler.rescheduleJob(triggerKey, trigger); // update trigger
         } else {
             scheduler.scheduleJob(jobDetail, trigger);
         }
-    }  
+    }
+
     public void unscheduleTask(Task task) throws SchedulerException {
-        if (task == null || task.getTaskId() == null) return;
+        if (task == null || task.getTaskId() == null)
+            return;
 
         JobKey jobKey = JobKey.jobKey("task-" + task.getTaskId(), "tasks");
         TriggerKey triggerKey = TriggerKey.triggerKey("trigger-" + task.getTaskId(), "tasks");
@@ -85,7 +91,7 @@ public class QuartzSchedulerService {
             scheduleTask(task);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private Class<? extends Job> loadJobClass(String className) throws ClassNotFoundException {
         Class<?> className1 = Class.forName(className);

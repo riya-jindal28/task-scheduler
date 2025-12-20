@@ -77,7 +77,7 @@ public class RetryService {
             String retryJobName = "RetryJob_" + task.getTaskId() + nextAttempt;
 
             JobDataMap dataMap = new JobDataMap();
-            dataMap.put("taskID", task.getTaskId());
+            dataMap.put("taskId", task.getTaskId());
             dataMap.put("retryAttempt", nextAttempt);
             dataMap.put("parentExecutionId", failedExecution.getExecutionId());
             dataMap.put("error", error.getMessage());
